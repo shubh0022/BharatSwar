@@ -53,16 +53,30 @@ export default function Sidebar({ onSelectEra, selectedEra }: SidebarProps) {
         }`}
       dir={isRtl ? "rtl" : "ltr"}
     >
-      {/* Brand Header */}
-      <div className="flex items-center gap-3 mb-8 px-2">
-        <Logo size={42} />
-        <div>
-          <h1 className="text-xl font-bold font-display tracking-wide bg-gradient-to-r from-accent-orange via-gold to-teal bg-clip-text text-transparent">
-            {t.brand}
+      {/* Brand Header — matches uploaded BharatSwar logo */}
+      <div className="flex flex-col items-center gap-2 mb-8 px-2 py-3 border-b border-white/5">
+        {/* Logo Mark */}
+        <div className="drop-shadow-[0_0_16px_rgba(255,85,0,0.35)]">
+          <Logo size={54} />
+        </div>
+        {/* Wordmark */}
+        <div className="text-center">
+          <h1
+            className="text-[22px] font-bold leading-tight"
+            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+          >
+            <span className="text-white">Bharat</span>
+            <span className="text-[#FF5500]">S</span>
+            <span className="text-white">war</span>
           </h1>
-          <p className="text-[10px] text-white/50 tracking-wider font-light mt-0.5">
-            {t.tagline}
-          </p>
+          {/* Gold divider + Devanagari */}
+          <div className="flex items-center justify-center gap-2 mt-0.5">
+            <div className="h-px w-6 bg-gradient-to-r from-transparent to-[#FFB800]/60" />
+            <span className="text-[11px] font-semibold text-[#FFB800]/90 tracking-[0.12em]">
+              भारत स्वर
+            </span>
+            <div className="h-px w-6 bg-gradient-to-l from-transparent to-[#FFB800]/60" />
+          </div>
         </div>
       </div>
 

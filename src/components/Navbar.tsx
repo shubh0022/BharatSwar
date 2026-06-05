@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import { UI_TRANSLATIONS } from "@/lib/translations";
 import { detectUserRegion } from "@/lib/api";
-import { Search, MapPin, WifiOff, Wifi, User, Menu } from "lucide-react";
-import Logo from "./Logo";
+import { Search, MapPin, WifiOff, Wifi, User, Menu, Sparkles } from "lucide-react";
 
 interface NavbarProps {
   searchQuery: string;
@@ -21,6 +20,7 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
     toggleAiDj,
     offlineMode,
     toggleOfflineMode,
+    userProfile,
   } = useStore();
 
   const [isLocating, setIsLocating] = useState(false);
@@ -118,14 +118,16 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
               : "bg-white/5 text-white hover:bg-white/8 border-white/10 hover:border-white/20"
             }`}
         >
-          <Logo size={16} />
+          <Sparkles className="w-3.5 h-3.5" />
           <span>{t.askDjBtn}</span>
         </button>
 
         {/* User Profile avatar */}
-        <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-accent-orange to-gold flex items-center justify-center p-[1px] cursor-pointer hover:opacity-90">
-          <div className="w-full h-full rounded-full bg-surface flex items-center justify-center">
-            <User className="w-4 h-4 text-white/80" />
+        <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#FF5500] to-[#FFBB00] flex items-center justify-center p-[1.5px] cursor-pointer hover:opacity-90 hover:scale-105 transition-all">
+          <div className="w-full h-full rounded-full bg-[#0a0a0f] flex items-center justify-center text-base">
+            {userProfile?.avatarEmoji
+              ? <span>{userProfile.avatarEmoji}</span>
+              : <User className="w-4 h-4 text-white/80" />}
           </div>
         </div>
       </div>
