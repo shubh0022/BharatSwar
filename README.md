@@ -1,4 +1,4 @@
-# 🎵 BharatSwar (भारत स्वर)
+
 
 <div align="center">
 <img width="1254" height="1254" alt="ChatGPT Image Jun 5, 2026, 08_39_10 AM" src="https://github.com/user-attachments/assets/8d131f72-5599-461e-8890-0c153a765efa" />
