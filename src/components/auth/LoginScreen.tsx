@@ -42,9 +42,7 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
   const [loading, setLoading] = useState(false);
   const [loadingAction, setLoadingAction] = useState("");
   const [logoAnimated, setLogoAnimated] = useState(false);
-  const [wavePhase, setWavePhase] = useState(0);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const animRef = useRef<number>();
 
   // Tagline rotator
   useEffect(() => {
@@ -63,19 +61,6 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
   useEffect(() => {
     const t = setTimeout(() => setLogoAnimated(true), 200);
     return () => clearTimeout(t);
-  }, []);
-
-  // Live wave animation
-  useEffect(() => {
-    let startTime: number | null = null;
-    const animate = (ts: number) => {
-      if (!startTime) startTime = ts;
-      const elapsed = (ts - startTime) / 1000;
-      setWavePhase(elapsed);
-      animRef.current = requestAnimationFrame(animate);
-    };
-    animRef.current = requestAnimationFrame(animate);
-    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
   }, []);
 
   const simulateAuth = (action: string, ms = 1800) => {
@@ -116,25 +101,7 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
     onSuccess("phone");
   };
 
-  // SVG animated waveform logo path
-  const getWavePath = (phase: number) => {
-    const pts: string[] = [];
-    const W = 200, H = 80, mid = H / 2;
-    const amplitudes = [28, 18, 12, 22, 16, 8];
-    const freqs = [2.2, 3.5, 5, 1.8, 4, 6.5];
-    const phases = [0, 1.2, 2.4, 0.6, 1.8, 3.0];
-    for (let x = 0; x <= W; x += 2) {
-      let y = mid;
-      for (let h = 0; h < amplitudes.length; h++) {
-        const amp = amplitudes[h] * (1 - Math.abs(x - W / 2) / W);
-        y += amp * Math.sin(freqs[h] * (x / W) * Math.PI * 2 + phase * 0.8 + phases[h]);
-      }
-      pts.push(`${x === 0 ? "M" : "L"} ${x},${y}`);
-    }
-    return pts.join(" ");
-  };
 
-  const wavePath = getWavePath(wavePhase);
 
   return (
     <div className="fixed inset-0 flex overflow-hidden bg-[#05050A]">
@@ -176,70 +143,53 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
             transition: "all 1.1s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
-          {/* SVG Logo Mark */}
-          <div className="relative w-40 h-40 flex items-center justify-center">
-            <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" fill="none">
-              {/* Outer Chakra ring */}
-              <circle cx="100" cy="100" r="90" stroke="url(#chakraGrad)" strokeWidth="2" opacity="0.6" />
-              {/* Inner glow ring */}
-              <circle cx="100" cy="100" r="80" stroke="url(#innerGrad)" strokeWidth="0.8" opacity="0.3" strokeDasharray="4 8" />
-              {/* Spoke lines (Ashoka-inspired) */}
-              {Array.from({ length: 12 }).map((_, i) => {
-                const angle = (i * 30 * Math.PI) / 180;
-                const x1 = 100 + 65 * Math.cos(angle);
-                const y1 = 100 + 65 * Math.sin(angle);
-                const x2 = 100 + 82 * Math.cos(angle);
-                const y2 = 100 + 82 * Math.sin(angle);
-                return (
-                  <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-                    stroke="url(#chakraGrad)" strokeWidth="1.5" opacity="0.4" />
-                );
-              })}
-
-              {/* Center Sound Wave */}
-              <g clipPath="url(#waveClip)">
-                <path d={wavePath} stroke="url(#waveGrad)" strokeWidth="3" fill="none"
-                  strokeLinecap="round" strokeLinejoin="round" />
-              </g>
-              <clipPath id="waveClip">
-                <circle cx="100" cy="100" r="62" />
-              </clipPath>
-
-              {/* Center dot — Sa (first swara) */}
-              <circle cx="100" cy="100" r="5" fill="#FF6B35">
-                <animate attributeName="r" values="4;7;4" dur="2.4s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="1;0.6;1" dur="2.4s" repeatCount="indefinite" />
-              </circle>
-              <circle cx="100" cy="100" r="14" stroke="#FF6B35" strokeWidth="1" fill="none" opacity="0.2">
-                <animate attributeName="r" values="12;20;12" dur="2.4s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.3;0;0.3" dur="2.4s" repeatCount="indefinite" />
-              </circle>
-
+          {/* Uploaded Logo Mark — orange-to-gold ring + M-waveform + Sa dot */}
+          <div className="relative w-48 h-48 flex items-center justify-center drop-shadow-[0_0_40px_rgba(255,107,53,0.3)]">
+            <svg viewBox="0 0 100 100" className="w-full h-full" fill="none">
               <defs>
-                <linearGradient id="chakraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FF6B35" />
-                  <stop offset="50%" stopColor="#F7C948" />
-                  <stop offset="100%" stopColor="#00C9A7" />
+                <linearGradient id="lgRingGrad" x1="50" y1="5" x2="50" y2="95" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#FF5500" />
+                  <stop offset="100%" stopColor="#FFBB00" />
                 </linearGradient>
-                <linearGradient id="innerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#F7C948" />
-                  <stop offset="100%" stopColor="#00C9A7" />
-                </linearGradient>
-                <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#FF6B35" />
-                  <stop offset="40%" stopColor="#F7C948" />
-                  <stop offset="100%" stopColor="#00C9A7" />
+                <linearGradient id="lgWaveGrad" x1="10" y1="0" x2="90" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#FFAA00" />
+                  <stop offset="50%" stopColor="#FFD700" />
+                  <stop offset="100%" stopColor="#FFAA00" />
                 </linearGradient>
               </defs>
+              {/* Outer ring — open at the bottom like the uploaded logo */}
+              <circle cx="50" cy="48" r="40"
+                stroke="url(#lgRingGrad)" strokeWidth="4.5" fill="none"
+                strokeDasharray="212 50" strokeDashoffset="-25"
+                strokeLinecap="round" />
+              {/* M-shaped waveform matching the uploaded logo */}
+              <path
+                d="M 10,48 L 20,48 Q 23,48 25,52 L 29,62 Q 31,68 34,62 L 38,36 Q 40,28 43,36 L 46,46 Q 48,50 50,48 Q 52,50 54,46 L 57,36 Q 60,28 62,36 L 66,62 Q 69,68 71,62 L 75,52 Q 77,48 80,48 L 90,48"
+                stroke="url(#lgWaveGrad)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              {/* Orange Sa dot — center of waveform */}
+              <circle cx="50" cy="48" r="6" fill="#FF5500">
+                <animate attributeName="r" values="5;8;5" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="1;0.7;1" dur="2.5s" repeatCount="indefinite" />
+              </circle>
+              {/* Pulse ring around dot */}
+              <circle cx="50" cy="48" r="10" stroke="#FF5500" strokeWidth="1" fill="none" opacity="0.25">
+                <animate attributeName="r" values="8;16;8" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.4;0;0.4" dur="2.5s" repeatCount="indefinite" />
+              </circle>
             </svg>
           </div>
 
-          {/* Wordmark */}
+          {/* Wordmark matching uploaded logo */}
           <div className="text-center">
-            <h1 className="text-5xl font-black tracking-tight bg-gradient-to-r from-[#FF6B35] via-[#F7C948] to-[#00C9A7] bg-clip-text text-transparent leading-none">
-              BharatSwar
+            <h1 className="text-5xl font-bold tracking-tight leading-none" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+              <span className="text-white">Bharat</span><span className="text-[#FF5500]">S</span><span className="text-white">war</span>
             </h1>
-            <p className="mt-1 text-xl font-light text-white/50 tracking-[0.3em]">भारत स्वर</p>
+            <div className="flex items-center gap-3 mt-2 justify-center">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#FFB800]/60" />
+              <p className="text-lg font-semibold text-[#FFB800] tracking-[0.15em]">भारत स्वर</p>
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#FFB800]/60" />
+            </div>
+            <p className="text-xs text-white/35 uppercase tracking-[0.25em] mt-1.5">Music for India. Music for the World.</p>
           </div>
 
           {/* Rotating Tagline */}
@@ -274,20 +224,16 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
           ))}
         </div>
 
-        {/* Waveform decoration at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 opacity-20">
-          <svg viewBox="0 0 800 96" className="w-full h-full" preserveAspectRatio="none">
-            <path d={`M 0,48 ${Array.from({ length: 40 }).map((_, i) => {
-              const x = (i / 39) * 800;
-              const y = 48 + Math.sin(wavePhase * 0.8 + i * 0.5) * 24 + Math.sin(wavePhase * 1.5 + i * 0.8) * 12;
-              return `L ${x},${y}`;
-            }).join(" ")} L 800,96 L 0,96 Z`}
-              fill="url(#bgWaveGrad)" />
+        {/* Static bottom waveform decoration */}
+        <div className="absolute bottom-0 left-0 right-0 h-20 opacity-15">
+          <svg viewBox="0 0 800 80" className="w-full h-full" preserveAspectRatio="none">
+            <path d="M 0,40 L 40,40 Q 55,40 62,55 L 75,70 Q 80,80 87,70 L 100,30 Q 107,15 114,30 L 122,50 Q 127,60 133,40 L 160,40 L 200,40 Q 213,40 220,55 L 233,70 Q 240,80 247,70 L 260,30 Q 267,15 274,30 L 282,50 Q 287,60 293,40 L 320,40 L 360,40 Q 373,40 380,55 L 393,70 Q 400,80 407,70 L 420,30 Q 427,15 434,30 L 442,50 Q 447,60 453,40 L 480,40 L 520,40 Q 533,40 540,55 L 553,70 Q 560,80 567,70 L 580,30 Q 587,15 594,30 L 602,50 Q 607,60 613,40 L 640,40 L 680,40 Q 693,40 700,55 L 713,70 Q 720,80 727,70 L 740,30 Q 747,15 754,30 L 762,50 Q 767,60 773,40 L 800,40 L 800,80 L 0,80 Z"
+              fill="url(#bwGrad)" />
             <defs>
-              <linearGradient id="bgWaveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#FF6B35" stopOpacity="0.6" />
-                <stop offset="50%" stopColor="#F7C948" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#00C9A7" stopOpacity="0.6" />
+              <linearGradient id="bwGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#FF5500" stopOpacity="0.8" />
+                <stop offset="50%" stopColor="#FFBB00" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#FF5500" stopOpacity="0.8" />
               </linearGradient>
             </defs>
           </svg>
@@ -304,34 +250,37 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
             transition: "all 0.9s 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
-          {/* Mobile logo (shown only on mobile) */}
+          {/* Mobile logo — matching uploaded design */}
           <div className="lg:hidden flex flex-col items-center mb-8">
-            <div className="relative w-20 h-20 flex items-center justify-center mb-3">
-              <svg viewBox="0 0 200 200" className="w-full h-full" fill="none">
-                <circle cx="100" cy="100" r="90" stroke="url(#mChakraGrad)" strokeWidth="3" opacity="0.7" />
-                <g clipPath="url(#mWaveClip)">
-                  <path d={wavePath} stroke="url(#mWaveGrad)" strokeWidth="4" fill="none" strokeLinecap="round" />
-                </g>
-                <clipPath id="mWaveClip"><circle cx="100" cy="100" r="62" /></clipPath>
-                <circle cx="100" cy="100" r="5" fill="#FF6B35">
-                  <animate attributeName="r" values="4;7;4" dur="2s" repeatCount="indefinite" />
-                </circle>
+            <div className="relative w-24 h-24 flex items-center justify-center mb-3 drop-shadow-[0_0_20px_rgba(255,85,0,0.4)]">
+              <svg viewBox="0 0 100 100" className="w-full h-full" fill="none">
                 <defs>
-                  <linearGradient id="mChakraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FF6B35" />
-                    <stop offset="100%" stopColor="#00C9A7" />
+                  <linearGradient id="mRingGrad" x1="50" y1="5" x2="50" y2="95" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#FF5500" />
+                    <stop offset="100%" stopColor="#FFBB00" />
                   </linearGradient>
-                  <linearGradient id="mWaveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#FF6B35" />
-                    <stop offset="100%" stopColor="#00C9A7" />
+                  <linearGradient id="mWaveGradNew" x1="10" y1="0" x2="90" y2="0" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#FFAA00" />
+                    <stop offset="50%" stopColor="#FFD700" />
+                    <stop offset="100%" stopColor="#FFAA00" />
                   </linearGradient>
                 </defs>
+                <circle cx="50" cy="48" r="40"
+                  stroke="url(#mRingGrad)" strokeWidth="4.5" fill="none"
+                  strokeDasharray="212 50" strokeDashoffset="-25"
+                  strokeLinecap="round" />
+                <path
+                  d="M 10,48 L 20,48 Q 23,48 25,52 L 29,62 Q 31,68 34,62 L 38,36 Q 40,28 43,36 L 46,46 Q 48,50 50,48 Q 52,50 54,46 L 57,36 Q 60,28 62,36 L 66,62 Q 69,68 71,62 L 75,52 Q 77,48 80,48 L 90,48"
+                  stroke="url(#mWaveGradNew)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                <circle cx="50" cy="48" r="6" fill="#FF5500">
+                  <animate attributeName="r" values="5;8;5" dur="2s" repeatCount="indefinite" />
+                </circle>
               </svg>
             </div>
-            <h1 className="text-3xl font-black bg-gradient-to-r from-[#FF6B35] via-[#F7C948] to-[#00C9A7] bg-clip-text text-transparent">
-              BharatSwar
+            <h1 className="text-3xl font-bold" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+              <span className="text-white">Bharat</span><span className="text-[#FF5500]">S</span><span className="text-white">war</span>
             </h1>
-            <p className="text-sm text-white/40 mt-1">भारत स्वर</p>
+            <p className="text-sm text-[#FFB800]/80 mt-1 tracking-widest">भारत स्वर</p>
           </div>
 
           {/* Glass Auth Card */}

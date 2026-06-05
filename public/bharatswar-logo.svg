@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" fill="none">
+  <rect width="1080" height="1080" fill="#000000"/>
+
+  <!-- Outer circular ring with orange-to-gold gradient -->
+  <defs>
+    <linearGradient id="ringGrad" x1="540" y1="80" x2="540" y2="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF5500"/>
+      <stop offset="100%" stop-color="#FFBB00"/>
+    </linearGradient>
+    <linearGradient id="waveGrad" x1="300" y1="300" x2="780" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFAA00"/>
+      <stop offset="50%" stop-color="#FFD000"/>
+      <stop offset="100%" stop-color="#FFAA00"/>
+    </linearGradient>
+    <linearGradient id="dividerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF8800" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#FFB800"/>
+      <stop offset="70%" stop-color="#FFB800"/>
+      <stop offset="100%" stop-color="#FF8800" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- The circular ring — open at bottom to let waveform extend slightly -->
+  <circle cx="540" cy="300" r="210" stroke="url(#ringGrad)" stroke-width="18" fill="none"
+    stroke-dasharray="1190 200" stroke-dashoffset="-100"
+    stroke-linecap="round"/>
+
+  <!-- Waveform path inside the ring — M-shaped heartbeat style -->
+  <!-- The waveform goes: flat left → dip → rise left hump → center dot valley → rise right hump → dip → flat right -->
+  <path d="M 310,300 
+           L 355,300 
+           Q 368,300 374,310
+           L 395,355 
+           Q 402,372 410,355
+           L 430,280 
+           Q 438,260 448,280
+           L 465,320
+           Q 472,340 480,300
+           L 500,300
+           Q 510,300 516,300
+           L 522,300
+           Q 528,298 534,295
+           C 540,295 540,295 540,300
+           C 540,305 546,302 552,300
+           L 558,300
+           Q 564,300 570,300
+           L 600,300
+           Q 608,300 612,280
+           L 630,240 
+           Q 638,220 646,240
+           L 665,315
+           Q 672,340 680,315
+           L 700,365
+           Q 708,382 716,365
+           L 730,300
+           L 770,300"
+    stroke="url(#waveGrad)" stroke-width="14" fill="none"
+    stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Center Sa dot (orange) -->
+  <circle cx="540" cy="300" r="20" fill="#FF5500"/>
+
+  <!-- ============ WORDMARK ============ -->
+  <!-- "Bharat" in white serif -->
+  <text x="540" y="590" 
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="148" font-weight="700"
+    fill="white" text-anchor="middle" letter-spacing="-2">Bharat</text>
+
+  <!-- "S" in orange/saffron — positioned after "Bharat" -->
+  <!-- Full word "Swar" rendered, with S in orange -->
+  <text x="540" y="730"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="148" font-weight="700"
+    fill="white" text-anchor="middle" letter-spacing="-2">
+    <tspan fill="#FF5500">S</tspan>war
+  </text>
+
+  <!-- ============ HINDI SUBTITLE ============ -->
+  <!-- Decorative divider lines + Hindi text -->
+  <line x1="200" y1="775" x2="410" y2="775" stroke="url(#dividerGrad)" stroke-width="2"/>
+  <text x="540" y="790"
+    font-family="'Noto Sans Devanagari', 'Mangal', sans-serif"
+    font-size="72" font-weight="600"
+    fill="#FFB800" text-anchor="middle" letter-spacing="3">भारत स्वर</text>
+  <line x1="670" y1="775" x2="880" y2="775" stroke="url(#dividerGrad)" stroke-width="2"/>
+
+  <!-- ============ TAGLINE ============ -->
+  <text x="540" y="870"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="34" font-weight="400"
+    fill="#AAAAAA" text-anchor="middle" letter-spacing="5">MUSIC FOR INDIA. MUSIC FOR THE WORLD.</text>
+</svg>
